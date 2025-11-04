@@ -71,14 +71,16 @@ const pct = (n) => `${Math.round(n * 100)}%`;
 const dateShort = (iso) =>
   new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "2-digit" });
 
+/* ---------- Themed building blocks ---------- */
+
 function Stat({ label, value, help }) {
   return (
-    <div className="bg-white border border-neutral-200 shadow-sm rounded-2xl p-4" role="group" aria-label={label}>
-      <div className="text-sm font-medium leading-6 text-neutral-600">{label}</div>
+    <div className="card p-4" role="group" aria-label={label}>
+      <div className="text-sm font-medium text-[var(--muted)]">{label}</div>
       <div className="mt-1 text-2xl md:text-3xl font-semibold tracking-tight" aria-live="polite">
         {value}
       </div>
-      {help && <div className="mt-1 text-sm text-neutral-500">{help}</div>}
+      {help && <div className="mt-1 text-sm text-[var(--muted)]">{help}</div>}
     </div>
   );
 }
@@ -86,21 +88,25 @@ function Stat({ label, value, help }) {
 function ProgressBar({ value }) {
   return (
     <div
-      className="w-full h-3 rounded-full bg-neutral-200"
+      className="w-full h-3 rounded-full"
+      style={{ background: "var(--cream-light)" }}
       aria-label="Progress"
       role="progressbar"
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={value}
     >
-      <div className="h-3 rounded-full bg-neutral-900" style={{ width: `${value}%` }} />
+      <div className="h-3 rounded-full" style={{ width: `${value}%`, background: "var(--accent)" }} />
     </div>
   );
 }
 
 function Pill({ children }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-neutral-300 px-2 py-1 text-xs text-neutral-700">
+    <span
+      className="inline-flex items-center rounded-lg px-2 py-1 text-xs"
+      style={{ background: "var(--cream-light)", color: "var(--accent)" }}
+    >
       {children}
     </span>
   );
@@ -108,18 +114,18 @@ function Pill({ children }) {
 
 function ProjectCard({ p }) {
   return (
-    <article className="bg-white border border-neutral-200 shadow-sm rounded-2xl p-5">
+    <article className="card p-5">
       <header className="flex items-start justify-between gap-4">
         <div>
           <h3 className="text-xl font-semibold leading-6">{p.name}</h3>
-          <p className="mt-1 text-sm text-neutral-600">
+          <p className="mt-1 text-sm text-[var(--muted)]">
             {p.type} • {p.status}
           </p>
         </div>
         <div className="text-right min-w-[12rem]">
-          <div className="text-sm text-neutral-600">Target IRR</div>
+          <div className="text-sm text-[var(--muted)]">Target IRR</div>
           <div className="text-2xl font-semibold">{pct(p.targetIRR)}</div>
-          <div className="mt-1 text-sm text-neutral-600">Est. Exit {p.estExit}</div>
+          <div className="mt-1 text-sm text-[var(--muted)]">Est. Exit {p.estExit}</div>
         </div>
       </header>
 
@@ -127,33 +133,42 @@ function ProjectCard({ p }) {
         <Stat label="Committed" value={fmtUSD(p.committed)} />
         <Stat label="Invested" value={fmtUSD(p.invested)} />
         <Stat label="Current Value" value={fmtUSD(p.value)} />
-        <div className="bg-white border border-neutral-200 shadow-sm rounded-2xl p-4">
-          <div className="text-sm font-medium leading-6 text-neutral-600">Progress</div>
+        <div className="card p-4">
+          <div className="text-sm font-medium text-[var(--muted)]">Progress</div>
           <div className="mt-1">
             <ProgressBar value={p.progress} />
           </div>
-          <div className="mt-1 text-sm text-neutral-500">{p.progress}% complete</div>
+          <div className="mt-1 text-sm text-[var(--muted)]">{p.progress}% complete</div>
         </div>
       </div>
 
       {p.alerts.length > 0 && (
         <div className="mt-4">
-          <div className="text-sm font-medium text-neutral-700 mb-2">Recent Alerts</div>
+          <div className="text-sm font-medium text-[var(--muted)] mb-2">Recent Alerts</div>
           <ul className="space-y-2">
             {p.alerts.map((a, i) => (
-              <li key={i} className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-amber-900">
-                {a}
-              </li>
+              <li
+  key={i}
+  className="rounded-xl p-3"
+  style={{ background: "var(--alert-bg)", color: "var(--alert-text)" }}
+>
+  {a}
+</li>
+
             ))}
           </ul>
         </div>
       )}
 
       <div className="mt-4">
-        <div className="text-sm font-medium text-neutral-700 mb-2">Documents</div>
+        <div className="text-sm font-medium text-[var(--muted)] mb-2">Documents</div>
         <ul className="grid md:grid-cols-2 gap-2">
           {p.docs.map((d) => (
-            <li key={d.id} className="flex items-center justify-between rounded-xl border border-neutral-200 p-3">
+            <li
+              key={d.id}
+              className="flex items-center justify-between rounded-xl border p-3"
+              style={{ borderColor: "rgba(0,0,0,0.12)" }}
+            >
               <span className="text-sm">{d.label}</span>
               <Pill>{dateShort(d.date)}</Pill>
             </li>
@@ -165,12 +180,19 @@ function ProjectCard({ p }) {
 }
 
 function Alert({ item }) {
-  const tone =
+  const styles =
     item.severity === "medium"
-      ? "bg-amber-50 border-amber-200 text-amber-900"
-      : "bg-neutral-50 border-neutral-200 text-neutral-800";
-  return <div className={`rounded-2xl border p-3 ${tone}`}>{item.text}</div>;
+      ? { background: "var(--cream)", color: "#0F4415" }
+      : { background: "var(--cream-light)", color: "var(--accent)" };
+
+  return (
+    <div className="rounded-2xl border p-3" style={{ ...styles, borderColor: "rgba(0,0,0,0.12)" }}>
+      {item.text}
+    </div>
+  );
 }
+
+/* ---------- Page ---------- */
 
 export default function InvestorDashboardMock() {
   const [query, setQuery] = useState("");
@@ -184,33 +206,44 @@ export default function InvestorDashboardMock() {
   }, [query]);
 
   return (
-    <div className="bg-neutral-50 text-neutral-800 min-h-screen">
-      <div className="sticky top-0 z-10 border-b border-neutral-200 bg-white/80 backdrop-blur">
+    <div className="min-h-screen">
+      {/* Header */}
+      <div className="sticky top-0 z-10 border-b bg-[var(--bg)]/80 backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div
-              className="h-10 w-10 rounded-xl bg-neutral-900 text-white flex items-center justify-center text-lg font-bold"
+              className="h-10 w-10 rounded-xl flex items-center justify-center text-lg font-bold"
+              style={{ background: "var(--accent)", color: "#fff" }}
               aria-hidden
             >
               CE
             </div>
             <div>
               <div className="text-lg md:text-xl font-semibold leading-6">Investor Dashboard</div>
-              <div className="text-sm text-neutral-500">Welcome back, {MOCK_PORTFOLIO.investorName}</div>
+              <div className="text-sm text-[var(--muted)]">Welcome back, {MOCK_PORTFOLIO.investorName}</div>
             </div>
           </div>
+
           <div className="flex items-center gap-2">
             <input
               aria-label="Search projects"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search projects…"
-              className="w-56 md:w-72 rounded-xl border border-neutral-300 px-3 py-2 text-base placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="w-56 md:w-72 rounded-xl px-3 py-2 text-base focus:outline-none focus:ring-2"
+              style={{
+                background: "var(--surface)",
+                color: "var(--text)",
+                border: "1px solid rgba(0,0,0,0.12)",
+                outline: "none",
+                boxShadow: "none",
+              }}
             />
           </div>
         </div>
       </div>
 
+      {/* Content */}
       <main className="mx-auto max-w-7xl px-4 py-6 grid gap-6">
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" aria-label="Portfolio summary">
           <Stat label="Committed" value={fmtUSD(MOCK_PORTFOLIO.totals.committed)} />
@@ -230,15 +263,15 @@ export default function InvestorDashboardMock() {
                 <ProjectCard key={p.id} p={p} />
               ))}
               {filtered.length === 0 && (
-                <div className="rounded-2xl border border-neutral-200 bg-white p-6 text-neutral-700">
-                  No projects match your search.
+                <div className="card p-6">
+                  <span className="text-[var(--muted)]">No projects match your search.</span>
                 </div>
               )}
             </div>
           </div>
 
           <aside className="grid gap-4" aria-label="Right rail">
-            <div className="bg-white border border-neutral-200 shadow-sm rounded-2xl p-5">
+            <div className="card p-5">
               <h2 className="text-lg font-semibold">Updates</h2>
               <div className="mt-3 grid gap-2">
                 {MOCK_ALERTS.map((a) => (
@@ -246,25 +279,27 @@ export default function InvestorDashboardMock() {
                 ))}
               </div>
               <div className="mt-4">
-                <button className="w-full rounded-xl bg-neutral-900 text-white px-4 py-2 hover:bg-neutral-800">
-                  Download Q3 Investor Packet
-                </button>
+                <button className="w-full btn">Download Q3 Investor Packet</button>
               </div>
             </div>
-            <div className="bg-white border border-neutral-200 shadow-sm rounded-2xl p-5">
+
+            <div className="card p-5">
               <h2 className="text-lg font-semibold">Need Help?</h2>
-              <p className="mt-2 text-neutral-700 text-base leading-7">
+              <p className="mt-2 text-base leading-7 text-[var(--muted)]">
                 Call Investor Relations at <strong>(555) 555-0199</strong> or email{" "}
                 <strong>ir@example.com</strong>. We’ll call you back within one business day.
               </p>
-              <button className="mt-3 w-full rounded-xl border border-neutral-300 px-4 py-2 hover:bg-neutral-100">
+              <button
+                className="mt-3 w-full btn-ghost"
+                style={{ background: "transparent" }}
+              >
                 Book a Call
               </button>
             </div>
           </aside>
         </section>
 
-        <footer className="pt-4 pb-10 text-sm text-neutral-500">
+        <footer className="pt-4 pb-10 text-sm text-[var(--muted)]">
           Last login: {dateShort(MOCK_PORTFOLIO.lastLogin)} • Demo only — mock data
         </footer>
       </main>

@@ -1,1 +1,62 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme variables */
+:root {
+  --bg: #ffffff;
+  --surface: #F5F5F5;
+  --text: #0F172A;   /* ink */
+  --muted: #6B7280;
+  --accent: #0F4415; /* brand green */
+  --accent-weak: #6B8F7A;
+  --cream: #E2D7AB;
+  --cream-light: #F1EFC8;
+
+  /* 👇 add these two new vars */
+  --alert-bg: var(--cream-light);
+  --alert-text: var(--accent);
+}
+
+.dark {
+  --bg: #0B1A10;      /* deep green-black */
+  --surface: #0F1F16; /* slightly lighter */
+  --text: #E7F3EA;    /* soft off-white */
+  --muted: #9AA5B1;
+  --accent: #E2D7AB;  /* flip to cream on dark */
+  --accent-weak: #C9C19B;
+  --cream: #E2D7AB;
+  --cream-light: #F1EFC8;
+
+  /* 👇 override alert colors for dark mode */
+  --alert-bg: #3a3a2a;   /* darker beige for contrast */
+  --alert-text: #f9f7e8; /* light text on dark beige */
+}
+
+html, body, #root { height: 100%; }
+body { background: var(--bg); color: var(--text); }
+
+.card {
+  @apply rounded-2xl shadow-soft border;
+  background: var(--surface);
+  border-color: rgba(0,0,0,0.08);
+}
+
+.btn {
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition;
+  background: var(--accent); color: white;
+}
+
+.btn-ghost {
+  @apply inline-flex items-center gap-2 px-3 py-2 rounded-xl border transition;
+  color: var(--text);
+  background: transparent;
+  border-color: rgba(0,0,0,0.12);
+}
+
+.badge {
+  @apply inline-flex items-center px-2 py-0.5 rounded-lg text-sm;
+  background: var(--cream-light);
+  color: #0F4415;
+}
+
