@@ -1,6 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;700&display=swap');
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
 
 /* Theme variables */
 :root {
@@ -12,6 +17,8 @@
   --accent-weak: #6B8F7A;
   --cream: #E2D7AB;
   --cream-light: #F1EFC8;
+  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Lora', serif;
 
   /* 👇 add these two new vars */
   --alert-bg: var(--cream-light);
@@ -34,7 +41,7 @@
 }
 
 html, body, #root { height: 100%; }
-body { background: var(--bg); color: var(--text); }
+body { background: var(--bg); color: var(--text); font-family: var(--font-body); }
 
 .card {
   @apply rounded-2xl shadow-soft border;
@@ -58,5 +65,10 @@ body { background: var(--bg); color: var(--text); }
   @apply inline-flex items-center px-2 py-0.5 rounded-lg text-sm;
   background: var(--cream-light);
   color: #0F4415;
+}
+
+h1, h2, h3, .heading {
+  font-family: var(--font-heading);
+  letter-spacing: 0.01em;
 }
 
